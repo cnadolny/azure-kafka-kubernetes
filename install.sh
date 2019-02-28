@@ -11,7 +11,8 @@ export CLUSTER_RG="$(az aks show -g $RG_NAME -n $CLUSTER_NAME --query nodeResour
 
 export KAFKA_IP_NAME_0="kafka_ip_0"
 export KAFKA_IP_NAME_1="kafka_ip_1"
-# az network public-ip create -g $CLUSTER_RG -n $KAFKA_IP_NAME_0 --allocation-method static
+
+az network public-ip create -g $CLUSTER_RG -n $KAFKA_IP_NAME_0 --allocation-method static
 
 KAFKA_IP_0=""
 while [ -z $KAFKA_IP_0 ]; do
@@ -21,7 +22,8 @@ while [ -z $KAFKA_IP_0 ]; do
 done
 echo $KAFKA_IP_0
 
-# az network public-ip create -g $CLUSTER_RG -n $KAFKA_IP_NAME_1 --allocation-method static
+az network public-ip create -g $CLUSTER_RG -n $KAFKA_IP_NAME_1 --allocation-method static
+
 KAFKA_IP_1=""
 while [ -z $KAFKA_IP_1 ]; do
   KAFKA_IP_1="$(az network public-ip show --resource-group $CLUSTER_RG --name $KAFKA_IP_NAME_1 --query ipAddress --output tsv)"
