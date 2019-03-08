@@ -6,9 +6,39 @@ Modified script from [kow3ns/kubernetes/kafka](https://github.com/kow3ns/kuberne
 
 This script assumes you already have the Azure CLI and kubectl already installed.
 
-Run ```./install.sh```. If you wish to provision a cluster, uncomment those lines, otherwise change the CLUSTER_NAME and RG_NAME to your corresponding values. This script will install a Kafka instance with two brokers and two Zookeeper instances on your AKS cluster, with external access via a loadbalancer. Currently it is only via PLAINTEXT authentication.
+If you wish to provision a cluster, uncomment below lines in ```install.sh```:
+
+```bash
+# echo "Creating resource group"
+# echo ". name:  $RG_NAME"
+# az group create -n $RG_NAME -l $LOCATION -o tsv >> log.txt
+
+# echo "Creating AKS cluster"
+# echo ".name: $CLUSTER_NAME"
+# echo ". location: $LOCATION"
+# az aks create -n $CLUSTER_NAME -g $RG_NAME -l $LOCATION --generate-ssh-keys -o tsv >> log.txt
+
+# echo "Setting $CLUSTER_NAME as current context"
+# az aks get-credentials -n $CLUSTER_NAME -g $RG_NAME -o tsv >> log.txt
+```
+
+If you already have Kubernetes cluster deployed, change the ```CLUSTER_NAME```, ```RG_NAME``` and ```LOCATION``` in ```install.sh``` to corresponding values from your deployment.
+
+```bash
+export CLUSTER_NAME="kafka-k8-cluster1"
+export RG_NAME="kafka-k81"
+export LOCATION="westus2"
+```
+
+### Running the script
+
+Run ```./install.sh```
+
+This script will install a Kafka instance with two brokers and two Zookeeper instances on your AKS cluster, with external access via a loadbalancer. Currently it only supports PLAINTEXT authentication.
 
 ## Test
+
+Once the installation is complete, you can test the Kafka cluster.
 
 To see the public IPs:
 
