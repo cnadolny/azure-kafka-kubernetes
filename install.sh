@@ -63,8 +63,8 @@ kubectl apply -f -
 
 for i in {0..1}; do kubectl label pods kafka-$i pod-name=kafka-$i;done
 
-echo "Running initContainer.yaml"
-kubectl create -f initContainer.yaml
+echo "Running testclient.yaml"
+kubectl create -f testclient.yaml
 
 echo "Running kubectl get all"
 kubectl get all 
