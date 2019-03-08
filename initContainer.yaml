@@ -2,7 +2,7 @@ apiVersion: v1
 kind: Pod
 metadata:
   name: kafka-test-client
-  namespace: the-project
+  namespace: kafka
 spec:
   containers:
   - command:
