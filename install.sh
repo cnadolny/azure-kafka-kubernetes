@@ -15,7 +15,7 @@ export LOCATION="westus2"
 # echo "Creating AKS cluster"
 # echo ".name: $CLUSTER_NAME"
 # echo ". location: $LOCATION"
-# az aks create -n $CLUSTER_NAME -g $RG_NAME -l $LOCATION --generate-ssh-keys -o tsv >> log.txt # did not work
+# az aks create -n $CLUSTER_NAME -g $RG_NAME -l $LOCATION --generate-ssh-keys -o tsv >> log.txt
 
 # echo "Setting $CLUSTER_NAME as current context"
 # az aks get-credentials -n $CLUSTER_NAME -g $RG_NAME -o tsv >> log.txt
@@ -31,7 +31,7 @@ az network public-ip create -g $CLUSTER_RG -n $KAFKA_IP_NAME_0 --allocation-meth
 
 KAFKA_IP_0=""
 while [ -z $KAFKA_IP_0 ]; do
-  KAFKA_IP_0="$(az network public-ip show --resource-group $CLUSTER_RG --name $KAFKA_IP_NAME_0 --query ipAddress --output tsv >> log.txt)"
+  KAFKA_IP_0="$(az network public-ip show --resource-group $CLUSTER_RG --name $KAFKA_IP_NAME_0 --query ipAddress --output tsv)"
   [ -z "$KAFKA_IP_0" ] && sleep 10
   echo "Waiting on external IP..."
 done
@@ -43,7 +43,7 @@ az network public-ip create -g $CLUSTER_RG -n $KAFKA_IP_NAME_1 --allocation-meth
 
 KAFKA_IP_1=""
 while [ -z $KAFKA_IP_1 ]; do
-  KAFKA_IP_1="$(az network public-ip show --resource-group $CLUSTER_RG --name $KAFKA_IP_NAME_1 --query ipAddress --output tsv >> log.txt)"
+  KAFKA_IP_1="$(az network public-ip show --resource-group $CLUSTER_RG --name $KAFKA_IP_NAME_1 --query ipAddress --output tsv)"
   [ -z "$KAFKA_IP_1" ] && sleep 10
   echo "Waiting on external IP..."
 done
