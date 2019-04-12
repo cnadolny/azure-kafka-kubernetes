@@ -1,0 +1,30 @@
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  name: mirror-maker
+spec:
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        name: mirror-maker
+    spec:
+      containers:
+      - name: mirror-maker
+        image: cnadolny/mirror-maker
+        imagePullPolicy: Always
+        env:
+        - name: "WHITELIST"
+          value: "*"
+        - name: "CONSUMER_IP"
+          value: "<PUBLIC_IP>:9092"
+        - name: "CONSUMER_CLIENT_ID"
+          value: "mirror_maker_consumer" 
+        - name: "CONSUMER_GROUP_ID"
+          value: "example-mirrormaker-group" 
+        - name: "PRODUCER_IP"
+          value: "<EH_NAMESPACE>.servicebus.windows.net:9093" 
+        - name: "PRODUCER_CLIENT_ID"
+          value: "mirror_maker_producer" 
+        - name: "PRODUCER_PASSWORD"
+          value: "Endpoint=sb://<EH_NAMESPACE>.servicebus.windows.net/;SharedAccessKeyName=RootManageSharedAccessKey;SharedAccessKey=<SHARED_ACCESS_KEY>"

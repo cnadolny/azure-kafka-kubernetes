@@ -55,7 +55,7 @@ kubectl -n kafka exec testclient -- ./bin/kafka-topics.sh --zookeeper <publicIP>
 To create a topic ```test``` on the Kafka cluster with 4 partitions:
 
 ```bash
-kubectl -n kafka exec testclient -- ./bin/kafka-topics.sh --create --zookeeper <zookeeper_IP>:2181 --replication-factor 1 --partitions 4 --topic test
+kubectl -n kafka exec testclient -- ./bin/kafka-topics.sh --create --zookeeper zk-cs:2181 --replication-factor 1 --partitions 4 --topic test
 ```
 
 ### Using Kafkacat
