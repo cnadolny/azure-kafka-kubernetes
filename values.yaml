@@ -1,0 +1,20 @@
+# ------------------------------------------------------------------------------
+# Kafka:
+# ------------------------------------------------------------------------------
+replicas: 3
+
+## External access.
+##
+external:
+  type: LoadBalancer
+  enabled: true
+  dns:
+    useExternal: false
+  loadBalancerIP: 
+    - ${KAFKA_IP_0}
+    - ${KAFKA_IP_1}
+    - ${KAFKA_IP_2}
+
+configurationOverrides:
+  "advertised.listeners": EXTERNAL://${LOAD_BALANCER_IP}:31090
+  "listener.security.protocol.map": PLAINTEXT:PLAINTEXT,EXTERNAL:PLAINTEXT
