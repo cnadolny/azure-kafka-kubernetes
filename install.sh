@@ -13,9 +13,9 @@ export KAFKA_IP_NAME_2="kafka-ip-2"
 
 echo "Creating AKS Cluster."
 
-# az group create -n $RG_NAME -l $LOCATION
-# az aks create -n $CLUSTER_NAME -g $RG_NAME -l $LOCATION --generate-ssh-keys
-# az aks get-credentials -n $CLUSTER_NAME -g $RG_NAME --overwrite-existing
+az group create -n $RG_NAME -l $LOCATION
+az aks create -n $CLUSTER_NAME -g $RG_NAME -l $LOCATION --generate-ssh-keys
+az aks get-credentials -n $CLUSTER_NAME -g $RG_NAME --overwrite-existing
 
 echo "Creating public IPs."
 

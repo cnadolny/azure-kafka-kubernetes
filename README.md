@@ -2,7 +2,7 @@
 
 This script assumes you already have the Azure CLI and kubectl already installed.
 
-If you wish to provision a cluster, uncomment below lines in ```install.sh```:
+If you wish to use an existing cluster, comment out the below lines in ```install.sh```:
 
 ```bash
 az group create -n $RG_NAME -l $LOCATION
@@ -10,7 +10,7 @@ az aks create -n $CLUSTER_NAME -g $RG_NAME -l $LOCATION --generate-ssh-keys
 az aks get-credentials -n $CLUSTER_NAME -g $RG_NAME --overwrite-existing
 ```
 
-If you already have Kubernetes cluster deployed, change the ```CLUSTER_NAME```, ```RG_NAME``` and ```LOCATION``` in ```install.sh``` to corresponding values from your deployment.
+Be sure to change the ```CLUSTER_NAME```, ```RG_NAME``` and ```LOCATION``` in ```install.sh``` to corresponding values from your deployment.
 
 ```bash
 export CLUSTER_NAME="kafka-k8-cluster"
