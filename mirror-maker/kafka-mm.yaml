@@ -1,3 +1,18 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: mirror-maker-script
+data:
+  run.sh: |
+    #!/bin/sh
+    CONSUMER_CONFIG="bootstrap.servers=$CONSUMER_IP\nclient.id=$CONSUMER_CLIENT_ID\ngroup.id=$CONSUMER_GROUP_ID\nexclude.internal.topics=true"
+    echo $CONSUMER_CONFIG > /usr/bin/consumer.config
+
+    PRODUCER_CONFIG="bootstrap.servers=$PRODUCER_ENDPOINT\nclient.id=$PRODUCER_CLIENT_ID\nsasl.mechanism=PLAIN\nsecurity.protocol=SASL_SSL\nsasl.jaas.config=org.apache.kafka.common.security.plain.PlainLoginModule required username=\"\$ConnectionString\" password=\"$PRODUCER_PASSWORD\";"
+    echo $PRODUCER_CONFIG > /usr/bin/producer.config
+
+    /usr/bin/kafka-mirror-maker --consumer.config /usr/bin/consumer.config --producer.config /usr/bin/producer.config --whitelist \'$WHITELIST\'
+---
 apiVersion: extensions/v1beta1
 kind: Deployment
 metadata:
@@ -11,20 +26,28 @@ spec:
     spec:
       containers:
       - name: mirror-maker
-        image: cnadolny/mirror-maker
+        image: confluentinc/cp-kafka
         imagePullPolicy: Always
+        volumeMounts:
+        - name: vol
+          mountPath: "/mnt/mirror-maker"
+        command: ['sh', '-c', 'cp /mnt/mirror-maker/* /usr/bin/ && chmod +x /usr/bin/run.sh && /usr/bin/run.sh']
         env:
         - name: "WHITELIST"
-          value: "*"
+          value: ".*"
         - name: "CONSUMER_IP"
-          value: "<PUBLIC_IP>:9092"
+          value: "KAFKA_ENDPOINT:KAFKA_PORT"
         - name: "CONSUMER_CLIENT_ID"
           value: "mirror_maker_consumer" 
         - name: "CONSUMER_GROUP_ID"
           value: "example-mirrormaker-group" 
-        - name: "PRODUCER_IP"
-          value: "<EH_NAMESPACE>.servicebus.windows.net:9093" 
+        - name: "PRODUCER_ENDPOINT"
+          value: "EH_NAMESPACE.servicebus.windows.net:9093" 
         - name: "PRODUCER_CLIENT_ID"
           value: "mirror_maker_producer" 
         - name: "PRODUCER_PASSWORD"
-          value: "Endpoint=sb://<EH_NAMESPACE>.servicebus.windows.net/;SharedAccessKeyName=RootManageSharedAccessKey;SharedAccessKey=<SHARED_ACCESS_KEY>"
+          value: "EH_CONNECTIONSTRING"
+      volumes:
+      - name: vol
+        configMap:
+          name: mirror-maker-script
