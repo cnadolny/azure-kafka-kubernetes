@@ -67,6 +67,10 @@ done
 
 echo "tiller upgrade complete."
 
+echo "installing kafka client"
+
+kubectl create -f kafkaclient.yaml
+
 echo "installing kafka helm chart"
 
 cat values.yaml | \
