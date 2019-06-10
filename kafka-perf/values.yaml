@@ -62,20 +62,25 @@ logSubPath: "logs"
 ## Pod scheduling preferences (by default keep pods within a release on separate nodes).
 ## ref: https://kubernetes.io/docs/concepts/configuration/assign-pod-node/#affinity-and-anti-affinity
 ## By default we don't set affinity
-affinity: {}
+# affinity: {}
 ## Alternatively, this typical example defines:
 ## antiAffinity (to keep Kafka pods on separate pods)
 ## and affinity (to encourage Kafka pods to be collocated with Zookeeper pods)
-# affinity:
-#   podAntiAffinity:
-#     requiredDuringSchedulingIgnoredDuringExecution:
-#     - labelSelector:
-#         matchExpressions:
-#         - key: app
-#           operator: In
-#           values:
-#           - kafka
-#       topologyKey: "kubernetes.io/hostname"
+affinity:
+  podAntiAffinity:
+    requiredDuringSchedulingIgnoredDuringExecution:
+    - labelSelector:
+        matchExpressions:
+        - key: app
+          operator: In
+          values:
+            - zookeeper
+        matchExpressions:
+        - key: app
+          operator: In
+          values:
+            - kafka
+      topologyKey: "kubernetes.io/hostname"
 #   podAffinity:
 #     preferredDuringSchedulingIgnoredDuringExecution:
 #      - weight: 50
@@ -124,31 +129,6 @@ headless:
   # targetPort:
   port: 9092
 
-## External access.
-##
-external:
-  type: LoadBalancer
-  # annotations:
-  #  service.beta.kubernetes.io/openstack-internal-load-balancer: "true"
-  dns:
-    useInternal: false
-    useExternal: false
-  # create an A record for each statefulset pod
-  distinct: false
-  enabled: true
-  servicePort: 19092
-  firstListenerPort: 31090
-  domain: cluster.local
-  loadBalancerIP: 
-    - ${KAFKA_IP_0}
-    - ${KAFKA_IP_1}
-    - ${KAFKA_IP_2}
-
-  init:
-    image: "lwolf/kubectl_deployer"
-    imageTag: "0.4"
-    imagePullPolicy: "IfNotPresent"
-
 podAnnotations: {}
 configurationOverrides:
   "offsets.topic.replication.factor": 3
@@ -161,19 +141,13 @@ configurationOverrides:
   "socket.request.max.bytes": "104857600"
   "num.partitions": 8
 
-
-  "advertised.listeners": EXTERNAL://${LOAD_BALANCER_IP}:31090
-  "listener.security.protocol.map": PLAINTEXT:PLAINTEXT,EXTERNAL:PLAINTEXT
-  "listeners": PLAINTEXT://:9092,EXTERNAL://:31090
-  "inter.broker.listener.name": "PLAINTEXT"
-
 persistence:
   enabled: true
 
   ## The size of the PersistentVolume to allocate to each Kafka Pod in the StatefulSet. For
   ## production servers this number should likely be much larger.
   ##
-  size: "30Gi"
+  size: "1Ti"
 
   ## The location within the Kafka container where the PV will mount its storage and Kafka will
   ## store its logs.
@@ -363,7 +337,7 @@ zookeeper:
   persistence:
     enabled: true
     # The amount of PV storage allocated to each Zookeeper pod in the statefulset
-    size: "30Gi"
+    size: "1Ti"
     storageClass: managed-premium
 
   ## Specify a Zookeeper imagePullPolicy
@@ -378,10 +352,18 @@ zookeeper:
   ## Pod scheduling preferences (by default keep pods within a release on separate nodes).
   ## ref: https://kubernetes.io/docs/concepts/configuration/assign-pod-node/#affinity-and-anti-affinity
   ## By default we don't set affinity:
-  affinity: {}  # Criteria by which pod label-values influence scheduling for zookeeper pods.
-  # podAntiAffinity:
-  #   requiredDuringSchedulingIgnoredDuringExecution:
-  #     - topologyKey: "kubernetes.io/hostname"
-  #       labelSelector:
-  #         matchLabels:
-  #           release: zookeeper
+  affinity:   # Criteria by which pod label-values influence scheduling for zookeeper pods.
+    podAntiAffinity:
+      requiredDuringSchedulingIgnoredDuringExecution:
+        - topologyKey: "kubernetes.io/hostname"
+          labelSelector:
+            matchExpressions:
+            - key: app
+              operator: In
+              values:
+                - zookeeper
+            matchExpressions:
+            - key: app
+              operator: In
+              values:
+                - kafka

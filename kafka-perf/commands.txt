@@ -1,14 +1,47 @@
-kubectl exec -it kafkaclient -- bin/kafka-perf-topics.sh --zookeeper kafka-perf-perf-zookeeper:2181 --create --topic test-rep-one --partitions 6 --replication-factor 1
-kubectl exec -it kafkaclient -- bin/kafka-perf-topics.sh --zookeeper kafka-perf-perf-zookeeper:2181 --create --topic test --partitions 6 --replication-factor 3 
+# Create topics
+kubectl exec -it kafkaclient-0 -- bin/kafka-topics.sh --zookeeper kafka-zookeeper-headless:2181 --create --topic test-rep-one --partitions 6 --replication-factor 1
+kubectl exec -it kafkaclient-0 -- bin/kafka-topics.sh --zookeeper kafka-zookeeper-headless:2181 --create --topic test --partitions 6 --replication-factor 3 
 
-kubectl exec -it kafkaclient -- bin/kafka-perf-producer-perf-test.sh --topic test-one-rep --num-records 50000000 --record-size 100 --throughput -1 --producer-props acks=1 bootstrap.servers=<PUBLIC_IP>:31090 buffer.memory=67108864 batch.size=8196
-kubectl exec -it kafkaclient -- bin/kafka-perf-producer-perf-test.sh --topic test-one-rep --num-records 50000000 --record-size 100 --throughput -1 --producer-props acks=1 bootstrap.servers=kafka-perf-headless:9092 buffer.memory=67108864 batch.size=8196
+# Single thread, no replication
+kubectl exec -it kafkaclient-0 -- bin/kafka-producer-perf-test.sh --topic test-one-rep --num-records 50000000 --record-size 100 --throughput -1 --producer-props acks=1 bootstrap.servers=kafka-headless:9092 buffer.memory=67108864 batch.size=8196
 
-kubectl exec -it kafkaclient -- bin/kafka-perf-producer-perf-test.sh --topic test --num-records 50000000 --record-size 100 --throughput -1 --producer-props acks=1 bootstrap.servers=<PUBLIC_IP>:31090 buffer.memory=67108864 batch.size=8196
-kubectl exec -it kafkaclient -- bin/kafka-perf-producer-perf-test.sh --topic test --num-records 50000000 --record-size 100 --throughput -1 --producer-props acks=1 bootstrap.servers=kafka-perf-headless:9092 buffer.memory=67108864 batch.size=8196
+# Single-thread, async 3x replicationc
+kubectl exec -it kafkaclient-0 -- bin/kafka-producer-perf-test.sh --topic test --num-records 50000000 --record-size 100 --throughput -1 --producer-props acks=1 bootstrap.servers=kafka-headless:9092 buffer.memory=67108864 batch.size=8196
 
-kubectl exec -it kafkaclient -- bin/kafka-perf-producer-perf-test.sh --topic test-one-rep --num-records 50000000 --record-size 100 --throughput -1 --producer-props acks=1 bootstrap.servers=kafka-perf-headless:9092 buffer.memory=67108864 batch.size=8196
-kubectl exec -it kafkaclient -- bin/kafka-perf-producer-perf-test.sh --topic test-one-rep --num-records 50000000 --record-size 100 --throughput -1 --producer-props acks=1 bootstrap.servers=<PUBLIC_IP>:31090 buffer.memory=67108864 batch.size=8196
+# Single-thread, sync 3x replication
+kubectl exec -it kafkaclient-0 -- bin/kafka-producer-perf-test.sh --topic test --num-records 50000000 --record-size 100 --throughput -1 --producer-props acks=-1 bootstrap.servers=kafka-headless:9092 buffer.memory=67108864 batch.size=64000
 
-kubectl exec -it kafkaclient -- bin/kafka-perf-producer-perf-test.sh --topic test-one-rep --num-records 50000000 --record-size 100 --throughput -1 --producer-props acks=-1 bootstrap.servers=kafka-perf-headless:9092 buffer.memory=67108864 batch.size=8196
-kubectl exec -it kafkaclient -- bin/kafka-perf-producer-perf-test.sh --topic test-one-rep --num-records 50000000 --record-size 100 --throughput -1 --producer-props acks=-1 bootstrap.servers=<PUBLIC_IP>:31090 buffer.memory=67108864 batch.size=8196
+# Three Producers, 3x async replication
+kubectl exec -it kafkaclient-0 -- bin/kafka-producer-perf-test.sh --topic test --num-records 50000000 --record-size 100 --throughput -1 --producer-props acks=1 bootstrap.servers=kafka-headless:9092 buffer.memory=67108864 batch.size=8196
+kubectl exec -it kafkaclient-1 -- bin/kafka-producer-perf-test.sh --topic test --num-records 50000000 --record-size 100 --throughput -1 --producer-props acks=1 bootstrap.servers=kafka-headless:9092 buffer.memory=67108864 batch.size=8196
+kubectl exec -it kafkaclient-2 -- bin/kafka-producer-perf-test.sh --topic test --num-records 50000000 --record-size 100 --throughput -1 --producer-props acks=1 bootstrap.servers=kafka-headless:9092 buffer.memory=67108864 batch.size=8196
+
+
+# Throughput Versus Stored Data
+kubectl exec -it kafkaclient-0 -- bin/kafka-topics.sh --zookeeper kafka-zookeeper:2181 --create --topic test-throughput --partitions 6 --replication-factor 3 
+kubectl exec -it kafkaclient-1 -- bin/kafka-producer-perf-test.sh --topic test-throughput --num-records 50000000000 --record-size 100 --throughput -1 --producer-props acks=1 bootstrap.servers=kafka-headless:9092 buffer.memory=67108864 batch.size=8196
+
+# Effect of message size
+
+for i in 10 100 1000 10000 100000;
+do
+echo ""
+echo $i
+kubectl exec -it kafkaclient-0 -- bin/kafka-producer-perf-test.sh --topic test --num-records $((1000*1024*1024/$i)) --record-size $i --throughput -1 --producer-props acks=1 bootstrap.servers=kafka-headless:9092 buffer.memory=67108864 batch.size=128000
+done;
+
+# Consumer throughput
+kubectl exec -it kafkaclient-0 -- bin/kafka-consumer-perf-test.sh --zookeeper kafka-zookeeper-headless:2181 --messages 50000000 --topic test --threads 1
+
+# 3 Consumers
+kubectl exec -it kafkaclient-0 -- bin/kafka-consumer-perf-test.sh --zookeeper kafka-zookeeper-headless:2181 --messages 50000000 --topic test --threads 1
+kubectl exec -it kafkaclient-1 -- bin/kafka-consumer-perf-test.sh --zookeeper kafka-zookeeper-headless:2181 --messages 50000000 --topic test --threads 1
+kubectl exec -it kafkaclient-2 -- bin/kafka-consumer-perf-test.sh --zookeeper kafka-zookeeper-headless:2181 --messages 50000000 --topic test --threads 1
+
+# End-to-end Latency - does not work, can't find class kafka.tools?
+kubectl exec -it kafkaclient -- bin/kafka-run-class.sh kafka.tools.TestEndToEndLatency esv4-hcl198.grid.linkedin.com:9092 esv4-hcl197.grid.linkedin.com:2181 test 5000
+
+# Producer and Consumer
+kubectl exec -it kafkaclient-0 -- bin/kafka-topics.sh --zookeeper kafka-zookeeper:2181 --create --topic test-producer-consumer --partitions 6 --replication-factor 3 
+kubectl exec -it kafkaclient-0 -- bin/kafka-producer-perf-test.sh --topic test-producer-consumer --num-records 50000000 --record-size 100 --throughput -1 --producer-props acks=1 bootstrap.servers=kafka-headless:9092 buffer.memory=67108864 batch.size=8196
+kubectl exec -it kafkaclient-1 -- bin/kafka-consumer-perf-test.sh --zookeeper kafka-zookeeper-headless:2181 --messages 50000000 --topic test-producer-consumer --threads 1
