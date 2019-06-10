@@ -29,7 +29,7 @@ kafkaHeapOptions: "-Xmx1G -Xms1G"
 ## The StatefulSet Update Strategy which Kafka will use when changes are applied.
 ## ref: https://kubernetes.io/docs/concepts/workloads/controllers/statefulset/#update-strategies
 updateStrategy:
-  type: "OnDelete"
+  type: "RollingUpdate"
 
 ## Start and stop pods in Parallel or OrderedReady (one-by-one.)  Note - Can not change after first release.
 ## ref: https://kubernetes.io/docs/tutorials/stateful-application/basic-stateful-set/#pod-management-policy

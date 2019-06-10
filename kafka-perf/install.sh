@@ -53,4 +53,10 @@ echo "tiller upgrade complete."
 
 echo "installing kafka helm chart"
 
-helm install --name kafka-perf incubator/kafka -f values.yaml
+helm install --name kafka incubator/kafka -f values.yaml
+
+kubectl rollout status statefulset/kafka
+
+kubectl create -f kafkaclient.yaml
+
+echo "Completed installing Kafka Helm chart and client pod."
