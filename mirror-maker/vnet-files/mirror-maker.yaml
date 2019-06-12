@@ -1,0 +1,53 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: mirror-maker-script
+data:
+  run.sh: |
+    #!/bin/sh
+    CONSUMER_CONFIG="bootstrap.servers=$CONSUMER_IP\nclient.id=$CONSUMER_CLIENT_ID\ngroup.id=$CONSUMER_GROUP_ID\nexclude.internal.topics=true"
+    echo $CONSUMER_CONFIG > /usr/bin/consumer.config
+
+    PRODUCER_CONFIG="bootstrap.servers=$PRODUCER_IP\nclient.id=$PRODUCER_CLIENT_ID"
+    echo $PRODUCER_CONFIG > /usr/bin/producer.config
+
+    /usr/bin/kafka-mirror-maker --consumer.config /usr/bin/consumer.config --producer.config /usr/bin/producer.config --whitelist \'$WHITELIST\'
+---
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  name: mirror-maker
+spec:
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        name: mirror-maker
+    spec:
+      containers:
+      - name: mirror-maker
+        image: confluentinc/cp-kafka
+        imagePullPolicy: Always
+        volumeMounts:
+        - name: vol
+          mountPath: "/mnt/mirror-maker"
+        command: ['sh', '-c', 'cp /mnt/mirror-maker/* /usr/bin/ && chmod +x /usr/bin/run.sh && /usr/bin/run.sh']
+        env:
+        - name: "WHITELIST"
+          value: ".*"
+        - name: "CONSUMER_IP"
+          value: "104.215.123.105:9092"
+        - name: "CONSUMER_CLIENT_ID"
+          value: "mirror_maker_consumer"
+        - name: "CONSUMER_GROUP_ID"
+          value: "example-mirrormaker-group"
+        - name: "PRODUCER_IP"
+          value: "104.46.115.206:9092"
+        - name: "PRODUCER_CLIENT_ID"
+          value: "mirror_maker_producer"
+        - name: "PRODUCER_GROUP_ID"
+          value: "example-mirrormaker-group"
+      volumes:
+      - name: vol
+        configMap:
+          name: mirror-maker-script
