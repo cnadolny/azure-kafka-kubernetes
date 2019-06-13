@@ -83,7 +83,7 @@ kubectl create --namespace zookeeper -f - <<EOF
 apiVersion: zookeeper.pravega.io/v1beta1
 kind: ZookeeperCluster
 metadata:
-  name: example-zookeepercluster
+  name: kafka-zookeeper
   namespace: zookeeper
 spec:
   replicas: 3
@@ -93,8 +93,9 @@ sleep ${wait}
 
 echo "Install Kafka BanzaiCloud Operator"
 
-helm repo add banzaicloud-stable https://kubernetes-charts.banzaicloud.com/
 helm install --name=kafka-operator --namespace=kafka banzaicloud-stable/kafka-operator -f ./example-prometheus-alerts.yaml
-# Add your zookeeper svc name to the configuration
-kubectl create -n kafka -f ./example-secret.yaml
-kubectl create -n kafka -f ./banzaicloud_v1alpha1_kafkacluster.yaml
+kubectl create -n kafka -f ./banzaicloud_kafkacluster.yaml
+
+### Kafka Perf test:
+
+kubectl create -f kafkaclient.yaml
