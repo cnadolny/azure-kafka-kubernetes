@@ -41,5 +41,6 @@ Some sample commands to test out, replacing with your own Zookeeper and Kafka:
 
 ## How to Run
 
-Run the commands individually found in the commands.txt file within a bash shell.
+Update the environment variables found in commands.sh, and then run the tests with:
 
+`sh commands.sh`
