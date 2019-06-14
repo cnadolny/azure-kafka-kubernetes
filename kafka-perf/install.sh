@@ -3,14 +3,26 @@
 echo "Running script to create Kafka on Kubernetes cluster"
 
 # Set correct values for your subscription
-export CLUSTER_NAME="kafka-perf"
-export RG_NAME="kafka-perf"
-export LOCATION="westus2"
+if [ -z "$CLUSTER_NAME" ]; then
+      CLUSTER_NAME="kafka-perf"
+fi
+if [ -z "$RG_NAME" ]; then
+      RG_NAME="kafka-perf"
+fi
+if [ -z "$LOCATION" ]; then
+      RG_NAME="westus2"
+fi
+if [ -z "$VM_SIZE" ]; then
+      VM_SIZE="Standard_DS4_v2"
+fi
+if [ -z "$NODE_COUNT" ]; then
+      NODE_COUNT=7
+fi
 
 echo "Creating AKS Cluster"
 
 az group create -n $RG_NAME -l $LOCATION
-az aks create -n $CLUSTER_NAME -g $RG_NAME -l $LOCATION --node-count 7 --node-vm-size Standard_DS4_v2 --generate-ssh-keys 
+az aks create -n $CLUSTER_NAME -g $RG_NAME -l $LOCATION --node-count $NODE_COUNT --node-vm-size $VM_SIZE --generate-ssh-keys 
 az aks get-credentials -n $CLUSTER_NAME -g $RG_NAME --overwrite-existing
 
 echo -e "adding RBAC ServiceAccount and ClusterRoleBinding for tiller\n\n"

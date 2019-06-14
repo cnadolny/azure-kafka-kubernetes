@@ -41,6 +41,21 @@ Some sample commands to test out, replacing with your own Zookeeper and Kafka:
 
 ## How to Run
 
-Update the environment variables found in commands.sh, and then run the tests with:
+Update the environment variables found in commands.sh. To get your Kafka and Zookeeper names, run the following, with the desired namespace if needed:
+`kubectl get services --namespace default`
+
+You should see an output like this:
+
+```
+kafka                      ClusterIP   10.0.172.51    <none>        9092/TCP                     37m
+kafka-headless             ClusterIP   None           <none>        9092/TCP                     37m
+kafka-zookeeper            ClusterIP   10.0.172.246   <none>        2181/TCP                     37m
+kafka-zookeeper-headless   ClusterIP   None           <none>        2181/TCP,3888/TCP,2888/TCP   37m
+kubernetes                 ClusterIP   10.0.0.1       <none>        443/TCP                      57m
+```
+
+Where in this example, KAFKA_BROKER_NAME=kafka-headless and ZOOKEEPER_NAME=kafka-zookeeper-headless .
+
+Once your environment variables are updated, run the tests with:
 
 `sh commands.sh`
