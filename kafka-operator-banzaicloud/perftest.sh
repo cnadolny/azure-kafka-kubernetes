@@ -20,12 +20,9 @@ if [ -z "$BUFFER_MEMORY" ]; then
       BUFFER_MEMORY=67108864
 fi
 
-
 # Create topics
 kubectl exec -it kafkaclient-0 -- bin/kafka-topics.sh --zookeeper $ZOOKEEPER_NAME --create --topic test-rep-one --partitions 6 --replication-factor 1
 kubectl exec -it kafkaclient-0 -- bin/kafka-topics.sh --zookeeper $ZOOKEEPER_NAME --create --topic test --partitions 6 --replication-factor 3 
-
-exit 1
 
 echo "Single thread, no replication"
 kubectl exec -it kafkaclient-0 -- bin/kafka-producer-perf-test.sh --topic test-one-rep --num-records $NUM_RECORDS --record-size $RECORD_SIZE --throughput $THROUGHPUT --producer-props acks=1 bootstrap.servers=$KAFKA_BROKER_NAME buffer.memory=$BUFFER_MEMORY batch.size=8196

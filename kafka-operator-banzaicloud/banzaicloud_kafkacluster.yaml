@@ -8,46 +8,50 @@ spec:
   zkAddresses:
     - "kafka-zookeeper-client.zookeeper:2181"
   brokerConfigs:
-    - image: "wurstmeister/kafka:2.12-2.1.0"
+    - image: "wurstmeister/kafka:2.12-2.2.1"
       id: 0
       storageConfigs:
         - mountPath: "/kafka-logs"
           pvcSpec:
             accessModes:
               - ReadWriteOnce
+            storageClassName: managed-premium
             resources:
               requests:
-                storage: 10Gi
-    - image: "wurstmeister/kafka:2.12-2.1.0"
+                storage: 32Gi
+    - image: "wurstmeister/kafka:2.12-2.2.1"
       id: 1
       storageConfigs:
         - mountPath: "/kafka-logs"
           pvcSpec:
             accessModes:
               - ReadWriteOnce
+            storageClassName: managed-premium
             resources:
               requests:
-                storage: 10Gi
-    - image: "wurstmeister/kafka:2.12-2.1.0"
+                storage: 32Gi
+    - image: "wurstmeister/kafka:2.12-2.2.1"
       id: 2
       storageConfigs:
         - mountPath: "/kafka-logs"
           pvcSpec:
             accessModes:
               - ReadWriteOnce
+            storageClassName: managed-premium
             resources:
               requests:
-                storage: 10Gi
-    - image: "wurstmeister/kafka:2.12-2.1.0"
+                storage: 32Gi
+    - image: "wurstmeister/kafka:2.12-2.2.1"
       id: 3
       storageConfigs:
         - mountPath: "/kafka-logs"
           pvcSpec:
             accessModes:
               - ReadWriteOnce
+            storageClassName: managed-premium
             resources:
               requests:
-                storage: 10Gi
+                storage: 32Gi
   listenersConfig:
     externalListeners:
       - type: "plaintext"
