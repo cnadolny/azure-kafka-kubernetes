@@ -41,17 +41,6 @@ spec:
             resources:
               requests:
                 storage: 32Gi
-    - image: "wurstmeister/kafka:2.12-2.2.1"
-      id: 3
-      storageConfigs:
-        - mountPath: "/kafka-logs"
-          pvcSpec:
-            accessModes:
-              - ReadWriteOnce
-            storageClassName: managed-premium
-            resources:
-              requests:
-                storage: 32Gi
   listenersConfig:
     externalListeners:
       - type: "plaintext"
