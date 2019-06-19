@@ -73,6 +73,14 @@ metadata:
   namespace: zookeeper
 spec:
   replicas: 3
+  persistence:
+    spec:
+      accessModes:
+        - ReadWriteOnce
+      storageClassName: managed-premium
+      resources:
+        requests:
+          storage: 32Gi
 EOF
 
 sleep ${wait}
