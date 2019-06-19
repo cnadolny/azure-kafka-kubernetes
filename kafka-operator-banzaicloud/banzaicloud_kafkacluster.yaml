@@ -1,0 +1,55 @@
+apiVersion: banzaicloud.banzaicloud.io/v1alpha1
+kind: KafkaCluster
+metadata:
+  labels:
+    controller-tools.k8s.io: "1.0"
+  name: kafka
+spec:
+  zkAddresses:
+    - "kafka-zookeeper-client.zookeeper:2181"
+  brokerConfigs:
+    - image: "wurstmeister/kafka:2.12-2.2.1"
+      id: 0
+      storageConfigs:
+        - mountPath: "/kafka-logs"
+          pvcSpec:
+            accessModes:
+              - ReadWriteOnce
+            storageClassName: managed-premium
+            resources:
+              requests:
+                storage: 32Gi
+    - image: "wurstmeister/kafka:2.12-2.2.1"
+      id: 1
+      storageConfigs:
+        - mountPath: "/kafka-logs"
+          pvcSpec:
+            accessModes:
+              - ReadWriteOnce
+            storageClassName: managed-premium
+            resources:
+              requests:
+                storage: 32Gi
+    - image: "wurstmeister/kafka:2.12-2.2.1"
+      id: 2
+      storageConfigs:
+        - mountPath: "/kafka-logs"
+          pvcSpec:
+            accessModes:
+              - ReadWriteOnce
+            storageClassName: managed-premium
+            resources:
+              requests:
+                storage: 32Gi
+  listenersConfig:
+    externalListeners:
+      - type: "plaintext"
+        name: "external"
+        externalStartingPort: 19090
+        containerPort: 9094
+    internalListeners:
+      - type: "plaintext"
+        name: "plaintext"
+        containerPort: 29092
+        usedForInnerBrokerCommunication: true
+  serviceAccount: ""
