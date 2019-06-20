@@ -18,14 +18,16 @@ spec:
       type: jbod
       volumes:
       - id: 0
+        class: managed-premium
         type: persistent-claim
-        size: 100Gi
+        size: 64Gi
         deleteClaim: false
   zookeeper:
     replicas: 1
     storage:
       type: persistent-claim
-      size: 100Gi
+      class: managed-premium
+      size: 32Gi
       deleteClaim: false
   entityOperator:
     topicOperator: {}
