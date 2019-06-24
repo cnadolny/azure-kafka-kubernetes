@@ -19,7 +19,23 @@ spec:
         command:
         - sh
         - -c
-        - exec tail -f /dev/null 
+        - exec tail -f /dev/null
+        env:
+        - name: CA_CRT
+          valueFrom:
+            secretKeyRef:
+              name: my-cluster-cluster-ca-cert
+              key: ca.crt
+        # - name: USER_CRT
+        #   valueFrom:
+        #     secretKeyRef:
+        #       name: my-user
+        #       key: user.crt
+        # - name: USER_KEY
+        #   valueFrom:
+        #     secretKeyRef:
+        #       name: my-user
+        #       key: user.key
       affinity:
         podAntiAffinity:
           requiredDuringSchedulingIgnoredDuringExecution:
