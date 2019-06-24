@@ -72,8 +72,8 @@ curl -L https://github.com/strimzi/strimzi-kafka-operator/releases/download/0.12
 
 echo "Installing Kafka"
 
-kubectl apply -f strimzi-kafka.yaml -n kafka
+kubectl apply -f simple-kafka.yaml -n kafka
 
 ### Kafka Perf test:
 kubectl create -f kafkaclient.yaml
-kubectl create -f strimzi-kafka-topic.yaml
+kubectl create -n kafka -f kafka-topics.yaml
