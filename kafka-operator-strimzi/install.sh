@@ -66,14 +66,18 @@ kubectl create namespace kafka
 
 echo "Installing Strimzi Kafka Operator"
 
-curl -L https://github.com/strimzi/strimzi-kafka-operator/releases/download/0.12.0/strimzi-cluster-operator-0.12.0.yaml \
+curl -L https://github.com/strimzi/strimzi-kafka-operator/releases/download/0.12.1/strimzi-cluster-operator-0.12.1.yaml \
   | sed 's/namespace: .*/namespace: kafka/' \
   | kubectl -n kafka apply -f -
 
 echo "Installing Kafka"
 
-kubectl apply -f simple-kafka.yaml -n kafka
+# Swap following lines if you don't want to use ssl.
+#kubectl create -n kafka -f simple-kafka.yaml
+kubectl create -n kafka -f tls-kafka.yaml
+
+kubectl create -n kafka -f kafka-topics.yaml
+kubectl create -n kafka -f kafka-users.yaml
 
 ### Kafka Perf test:
-kubectl create -f kafkaclient.yaml
-kubectl create -n kafka -f kafka-topics.yaml
+kubectl create -n kafka -f kafkaclient.yaml
