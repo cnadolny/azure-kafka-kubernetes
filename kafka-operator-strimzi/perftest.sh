@@ -2,11 +2,11 @@
 
 # Set correct values for your Kafka Cluster
 if [ -z "$KAFKA_BROKER_NAME" ]; then
-      KAFKA_BROKER_NAME="my-cluster-kafka-brokers.kafka:9092"
+  KAFKA_BROKER_NAME="my-cluster-kafka-brokers.kafka:9092"
 fi
 if [ -z "$ZOOKEEPER_NAME" ]; then
-      # This doesn't work - can't connect directly to zookeeper
-      ZOOKEEPER_NAME="my-cluster-zookeeper-client.kafka:2181"
+  # This doesn't work - can't connect directly to zookeeper
+  ZOOKEEPER_NAME="my-cluster-zookeeper-client.kafka:2181"
 fi
 if [ -z "$NUM_RECORDS" ]; then
       NUM_RECORDS=50000000
