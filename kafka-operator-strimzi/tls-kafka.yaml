@@ -7,10 +7,12 @@ spec:
     version: 2.2.1
     replicas: 3
     listeners:
-      plain: {}
-      tls: {}
+      tls:
+        authentication:
+          type: tls
     config:
       log.message.format.version: "2.2"
+      ssl.client.auth: "required"
     tlsSidecar:
       resources:
         requests:
