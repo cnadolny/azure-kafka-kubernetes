@@ -66,9 +66,8 @@ kubectl create namespace kafka
 
 echo "Installing Strimzi Kafka Operator"
 
-curl -L https://github.com/strimzi/strimzi-kafka-operator/releases/download/0.12.1/strimzi-cluster-operator-0.12.1.yaml \
-  | sed 's/namespace: .*/namespace: kafka/' \
-  | kubectl -n kafka apply -f -
+helm repo add strimzi http://strimzi.io/charts/
+helm install strimzi/strimzi-kafka-operator --namespace kafka --name kafka-operator
 
 echo "Installing Kafka"
 
