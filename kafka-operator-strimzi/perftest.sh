@@ -5,10 +5,14 @@ if [ -z "$KAFKA_BROKER_NAME" ]; then
   # Switch if you don't want to use ssl.
   # KAFKA_BROKER_NAME="my-cluster-kafka-brokers.kafka:9092"
   KAFKA_BROKER_NAME="my-cluster-kafka-brokers.kafka:9093"
+else
+  echo "Using Kafka Broker Name: $KAFKA_BROKER_NAME"
 fi
 if [ -z "$ZOOKEEPER_NAME" ]; then
   # This doesn't work - can't connect directly to zookeeper
   ZOOKEEPER_NAME="my-cluster-zookeeper-client.kafka:2181"
+else
+  echo "Using Zookeeper Name: $ZOOKEEPER_NAME"
 fi
 if [ -z "$NUM_RECORDS" ]; then
   NUM_RECORDS=50000000
@@ -22,6 +26,8 @@ fi
 if [ -z "$BUFFER_MEMORY" ]; then
   BUFFER_MEMORY=67108864
 fi
+
+echo "Perf test will send $NUM_RECORDS each with a size of $RECORD_SIZE."
 
 setup_kafka_client_ssl () {
   echo "Setting Up Kafka Client for SSL"
