@@ -30,7 +30,7 @@ spec:
         size: 64Gi
         deleteClaim: false
   zookeeper:
-    replicas: 1
+    replicas: 3
     storage:
       type: persistent-claim
       class: managed-premium
