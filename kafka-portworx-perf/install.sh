@@ -4,10 +4,10 @@ echo "Running script to create Kafka on Kubernetes cluster"
 
 # Set correct values for your subscription
 if [ -z "$CLUSTER_NAME" ]; then
-  CLUSTER_NAME="nr-kafka-px-test1"
+  CLUSTER_NAME="kafka-px-test"
 fi
 if [ -z "$RG_NAME" ]; then
-  RG_NAME="nr-kafka-px-test-rg"
+  RG_NAME="kafka-px-test-rg"
 fi
 if [ -z "$LOCATION" ]; then
   LOCATION="westus2"

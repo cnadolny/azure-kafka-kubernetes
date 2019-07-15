@@ -2,7 +2,7 @@
 
 # Set correct values for your Kafka Cluster
 if [ -z "$KAFKA_BROKER_NAME" ]; then
-      KAFKA_BROKER_NAME="kafka-zookeeper"
+      KAFKA_BROKER_NAME="kafka-headless"
 fi
 if [ -z "$NAMESPACE" ]; then
       NAMESPACE="default"
@@ -11,7 +11,7 @@ if [ -z "$ZOOKEEPER_NAME" ]; then
       ZOOKEEPER_NAME="kafka-zookeeper-headless"
 fi
 if [ -z "$NUM_RECORDS" ]; then
-      NUM_RECORDS=5000000
+      NUM_RECORDS=50000000
 fi
 if [ -z "$RECORD_SIZE" ]; then
       RECORD_SIZE=100
