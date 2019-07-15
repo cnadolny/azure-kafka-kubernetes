@@ -53,3 +53,11 @@ curl -L https://github.com/strimzi/strimzi-kafka-operator/releases/download/0.12
 ## How to Customize - Kafka Cluster
 
 You can customize the Kafka configuration by starting with `simple-kafka.yaml` which deploys a Kafka cluster that listens on both the plaintext and tls listeners. You can then proceed to configure your cluster using the [Strimzi documentation](https://strimzi.io/docs/latest/).
+
+## Using the Kafka Shell Scripts
+
+The operator encrypts all connections to Zookeeper using a TLS sidecar and you can't access zookeeper directly. If you want to use any of the bin/kafka* scripts, you should connect to any of the Kafka brokers and specify `--zookeeper localhost:2181` to use the encrypted tunnel.
+
+```bash
+kubectl exec -ti my-cluster-kafka-0 -- bin/kafka-topics.sh --list --zookeeper localhost:2181
+```
