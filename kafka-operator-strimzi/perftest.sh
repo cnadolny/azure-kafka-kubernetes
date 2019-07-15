@@ -45,6 +45,7 @@ setup_kafka_client_ssl () {
 setup_kafka_client_ssl
 
 echo "Single thread, no replication"
+echo $KAFKA_BROKER_NAME
 kubectl exec -n kafka -it kafkaclient-0 -- bin/kafka-producer-perf-test.sh \
   --topic test-one-rep --num-records $NUM_RECORDS --record-size $RECORD_SIZE \
   --throughput $THROUGHPUT --producer-props \

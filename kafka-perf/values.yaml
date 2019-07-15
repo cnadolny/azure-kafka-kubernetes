@@ -18,12 +18,13 @@ imagePullPolicy: "IfNotPresent"
 ## Configure resource requests and limits
 ## ref: http://kubernetes.io/docs/user-guide/compute-resources/
 resources: {}
-  # limits:
-  #   cpu: 200m
-  #   memory: 1536Mi
-  # requests:
-  #   cpu: 100m
-  #   memory: 1024Mi
+#  limits:
+#    cpu: 200m
+#    memory: 128MiMi
+#  requests:
+#    cpu: 200m
+#    memory: 644Mi
+
 kafkaHeapOptions: "-Xmx1G -Xms1G"
 
 ## The StatefulSet Update Strategy which Kafka will use when changes are applied.
@@ -147,7 +148,7 @@ persistence:
   ## The size of the PersistentVolume to allocate to each Kafka Pod in the StatefulSet. For
   ## production servers this number should likely be much larger.
   ##
-  size: "1Ti"
+  size: "64Gi"
 
   ## The location within the Kafka container where the PV will mount its storage and Kafka will
   ## store its logs.
@@ -252,13 +253,13 @@ prometheus:
     port: 9308
 
     ## Resource limits
-    resources: {}
-#      limits:
-#        cpu: 200m
-#        memory: 1Gi
-#      requests:
-#        cpu: 100m
-#        memory: 100Mi
+    #resources: {}
+    #  limits:
+    #    cpu: 500m
+    #    memory: 128Mi
+    #  requests:
+    #    cpu: 200m
+    #    memory: 64Mi
 
     # Tolerations for nodes that have taints on them.
     # Useful if you want to dedicate nodes to just run kafka-exporter
@@ -325,7 +326,14 @@ zookeeper:
 
   ## Configure Zookeeper resource requests and limits
   ## ref: http://kubernetes.io/docs/user-guide/compute-resources/
-  resources: ~
+  resources: {}
+  #  limits:
+  #    cpu: 500m
+  #    memory: 128MiMi
+  #  requests:
+  #    cpu: 200m
+  #    memory: 644Mi
+  
 
   replicaCount: 3
 
@@ -337,7 +345,7 @@ zookeeper:
   persistence:
     enabled: true
     # The amount of PV storage allocated to each Zookeeper pod in the statefulset
-    size: "1Ti"
+    size: "32Gi"
     storageClass: managed-premium
 
   ## Specify a Zookeeper imagePullPolicy

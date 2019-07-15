@@ -2,15 +2,30 @@
 
 echo "Running script to create Kafka on Kubernetes cluster"
 
-export CLUSTER_NAME="kafka-perf"
-export RG_NAME="kafka-perf"
-export LOCATION="westus2"
-export NODE_SIZE="Standard_DS4_v2"
-export NODE_COUNT="7"
+
+# Set correct values for your subscription
+if [ -z "$CLUSTER_NAME" ]; then
+      CLUSTER_NAME="kafka-helm-px"
+fi
+if [ -z "$RG_NAME" ]; then
+      RG_NAME="kafka-helm-rg"
+fi
+if [ -z "$LOCATION" ]; then
+      LOCATION="westus2"
+fi
+if [ -z "$VM_SIZE" ]; then
+      VM_SIZE="Standard_DS5_v2"
+fi
+if [ -z "$NODE_COUNT" ]; then
+      NODE_COUNT=3
+fi
+
 
 . ../utils/aks_setup.sh
 
 echo "installing kafka helm chart"
+
+helm repo add incubator http://storage.googleapis.com/kubernetes-charts-incubator
 
 helm install --name kafka incubator/kafka -f values.yaml
 
