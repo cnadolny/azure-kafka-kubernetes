@@ -2,7 +2,7 @@
 
 # Set correct values for your Kafka Cluster
 if [ -z "$KAFKA_BROKER_NAME" ]; then
-      KAFKA_BROKER_NAME="kafka-headless"
+      KAFKA_BROKER_NAME="kafka-zookeeper"
 fi
 if [ -z "$NAMESPACE" ]; then
       NAMESPACE="default"
@@ -11,7 +11,7 @@ if [ -z "$ZOOKEEPER_NAME" ]; then
       ZOOKEEPER_NAME="kafka-zookeeper-headless"
 fi
 if [ -z "$NUM_RECORDS" ]; then
-      NUM_RECORDS=50000000
+      NUM_RECORDS=5000000
 fi
 if [ -z "$RECORD_SIZE" ]; then
       RECORD_SIZE=100
@@ -25,15 +25,15 @@ fi
 
 
 # Create topics
-# kubectl exec -it kafkaclient-0 -- bin/kafka-topics.sh --zookeeper $ZOOKEEPER_NAME.$NAMESPACE:2181 --create --topic test-rep-one --partitions 6 --replication-factor 1
+ kubectl exec -it kafkaclient-0 -- bin/kafka-topics.sh --zookeeper $ZOOKEEPER_NAME.$NAMESPACE:2181 --create --topic test-rep-one --partitions 6 --replication-factor 1
 # kubectl exec -it kafkaclient-0 -- bin/kafka-topics.sh --zookeeper $ZOOKEEPER_NAME.$NAMESPACE:2181 --create --topic test --partitions 6 --replication-factor 3 
 
 echo "Single thread, no replication"
 echo $KAFKA_BROKER_NAME
-kubectl exec -n kafka -it kafkaclient-0 -- bin/kafka-producer-perf-test.sh \
+kubectl exec -n $NAMESPACE -it kafkaclient-0 -- bin/kafka-producer-perf-test.sh \
   --topic test-one-rep --num-records $NUM_RECORDS --record-size $RECORD_SIZE \
   --throughput $THROUGHPUT --producer-props \
-  acks=1 bootstrap.servers=$KAFKA_BROKER_NAME buffer.memory=$BUFFER_MEMORY batch.size=8196 
+  acks=1 bootstrap.servers=$KAFKA_BROKER_NAME.$NAMESPACE:9092 buffer.memory=$BUFFER_MEMORY batch.size=8196 
   --producer.config /opt/kafka/config/ssl-config.properties
 
 exit 1

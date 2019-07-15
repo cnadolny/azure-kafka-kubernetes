@@ -335,7 +335,7 @@ zookeeper:
   #    memory: 644Mi
   
 
-  replicaCount: 1
+  replicaCount: 3
 
   ## Environmental variables to set in Zookeeper
   env:

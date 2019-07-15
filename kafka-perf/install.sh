@@ -7,7 +7,7 @@ if [ -z "$CLUSTER_NAME" ]; then
       CLUSTER_NAME="kafka-helm-px"
 fi
 if [ -z "$RG_NAME" ]; then
-      RG_NAME="kafka-helm-px-rg"
+      RG_NAME="kafka-helm-rg"
 fi
 if [ -z "$LOCATION" ]; then
       LOCATION="westus2"
