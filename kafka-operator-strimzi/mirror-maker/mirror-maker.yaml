@@ -6,10 +6,10 @@ metadata:
 data:
   run.sh: |
     #!/bin/sh
-    CONSUMER_CONFIG="bootstrap.servers=$CONSUMER_IP\nclient.id=$CONSUMER_CLIENT_ID\ngroup.id=$CONSUMER_GROUP_ID\nexclude.internal.topics=true"
+    CONSUMER_CONFIG="bootstrap.servers=$CONSUMER_IP\nclient.id=$CONSUMER_CLIENT_ID\ngroup.id=$CONSUMER_GROUP_ID\nexclude.internal.topics=true\nsecurity.protocol=ssl\nssl.truststore.location=$CONSUMER_TRUSTSTORE_LOCATION"
     echo $CONSUMER_CONFIG > /usr/bin/consumer.config
 
-    PRODUCER_CONFIG="bootstrap.servers=$PRODUCER_ENDPOINT\nclient.id=$PRODUCER_CLIENT_ID"
+    PRODUCER_CONFIG="bootstrap.servers=$PRODUCER_ENDPOINT\nclient.id=$PRODUCER_CLIENT_ID"\nsecurity.protocol=ssl\nssl.truststore.location=$PRODUCER_TRUSTSTORE_LOCATION"
     echo $PRODUCER_CONFIG > /usr/bin/producer.config
 
     /usr/bin/kafka-mirror-maker --consumer.config /usr/bin/consumer.config --producer.config /usr/bin/producer.config --whitelist \'$WHITELIST\'
@@ -47,6 +47,10 @@ spec:
           value: "<PUBLIC_IP>:9094" 
         - name: "PRODUCER_CLIENT_ID"
           value: "mirror_maker_producer" 
+        - name: "PRODUCER_TRUSTSTORE_LOCATION"
+          value: "/path/to/producer/truststore"
+        - name: "CONSUMER_TRUSTSTORE_LOCATION"
+          value: "/path/to/consumer/truststore"
       volumes:
       - name: vol
         configMap:
