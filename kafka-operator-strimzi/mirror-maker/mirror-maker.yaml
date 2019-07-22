@@ -1,0 +1,57 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: mirror-maker-script
+  namespace: kafka
+data:
+  run.sh: |
+    #!/bin/sh
+    CONSUMER_CONFIG="bootstrap.servers=$CONSUMER_IP\nclient.id=$CONSUMER_CLIENT_ID\ngroup.id=$CONSUMER_GROUP_ID\nexclude.internal.topics=true\nsecurity.protocol=ssl\nssl.truststore.location=$CONSUMER_TRUSTSTORE_LOCATION"
+    echo $CONSUMER_CONFIG > /usr/bin/consumer.config
+
+    PRODUCER_CONFIG="bootstrap.servers=$PRODUCER_ENDPOINT\nclient.id=$PRODUCER_CLIENT_ID"\nsecurity.protocol=ssl\nssl.truststore.location=$PRODUCER_TRUSTSTORE_LOCATION"
+    echo $PRODUCER_CONFIG > /usr/bin/producer.config
+
+    /usr/bin/kafka-mirror-maker --consumer.config /usr/bin/consumer.config --producer.config /usr/bin/producer.config --whitelist \'$WHITELIST\'
+---
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  name: mirror-maker
+  namespace: kafka
+spec:
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        name: mirror-maker
+    spec:
+      containers:
+      - name: mirror-maker
+        image: confluentinc/cp-kafka
+        imagePullPolicy: Always
+        volumeMounts:
+        - name: vol
+          mountPath: "/mnt/mirror-maker"
+        command: ['sh', '-c', 'cp /mnt/mirror-maker/* /usr/bin/ && chmod +x /usr/bin/run.sh && /usr/bin/run.sh']
+        env:
+        - name: "WHITELIST"
+          value: ".*"
+        - name: "CONSUMER_IP"
+          value: "<PUBLIC_IP>:9094" 
+        - name: "CONSUMER_CLIENT_ID"
+          value: "mirror_maker_consumer" 
+        - name: "CONSUMER_GROUP_ID"
+          value: "example-mirrormaker-group" 
+        - name: "PRODUCER_ENDPOINT"
+          value: "<PUBLIC_IP>:9094" 
+        - name: "PRODUCER_CLIENT_ID"
+          value: "mirror_maker_producer" 
+        - name: "PRODUCER_TRUSTSTORE_LOCATION"
+          value: "/path/to/producer/truststore"
+        - name: "CONSUMER_TRUSTSTORE_LOCATION"
+          value: "/path/to/consumer/truststore"
+      volumes:
+      - name: vol
+        configMap:
+          name: mirror-maker-script
