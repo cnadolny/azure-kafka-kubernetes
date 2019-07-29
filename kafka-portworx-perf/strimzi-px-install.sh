@@ -2,8 +2,8 @@
 
 echo "Running script to create Kafka on Kubernetes cluster"
 
-export CLUSTER_NAME="nr-strimzi-px-test2"
-export RG_NAME="nr-strimzi-px-rg2"
+export CLUSTER_NAME="strimzi-px-test2"
+export RG_NAME="strimzi-px-rg2"
 export LOCATION="westus2"
 export NODE_SIZE="Standard_DS5_v2"
 export NODE_COUNT="3"
