@@ -1,0 +1,106 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: zoo-entrance2
+  labels:
+    app: zoo-entrance2
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: zoo-entrance2
+  strategy:
+    type: Recreate
+  template:
+    metadata:
+      labels:
+        app: zoo-entrance2
+    spec:
+      containers:
+        - name: tls-sidecar
+          image: 'docker.io/scholzj/zoo-entrance-stunnel:latest'
+          ports:
+            - containerPort: 2181
+              name: zoo
+              protocol: TCP
+          env:
+            - name: TLS_SIDECAR_LOG_LEVEL
+              value: notice
+            - name: STRIMZI_ZOOKEEPER_CONNECT
+              value: 'cluster2-zookeeper-client:2181'
+          imagePullPolicy: Always
+          livenessProbe:
+            exec:
+              command:
+                - /opt/stunnel/stunnel_healthcheck.sh
+                - '2181'
+            failureThreshold: 3
+            initialDelaySeconds: 15
+            periodSeconds: 10
+            successThreshold: 1
+            timeoutSeconds: 5
+          readinessProbe:
+            exec:
+              command:
+                - /opt/stunnel/stunnel_healthcheck.sh
+                - '2181'
+            failureThreshold: 3
+            initialDelaySeconds: 15
+            periodSeconds: 10
+            successThreshold: 1
+            timeoutSeconds: 5
+          volumeMounts:
+            - mountPath: /etc/tls-sidecar/eo-certs/
+              name: eo-certs
+            - mountPath: /etc/tls-sidecar/cluster-ca-certs/
+              name: cluster-ca-certs
+      restartPolicy: Always
+      terminationGracePeriodSeconds: 30
+      volumes:
+        - name: eo-certs
+          secret:
+            defaultMode: 288
+            secretName: cluster2-entity-operator-certs
+        - name: cluster-ca-certs
+          secret:
+            defaultMode: 288
+            secretName: cluster2-cluster-ca-cert
+---
+
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    app: zoo-entrance2
+  name: zoo-entrance2
+spec:
+  ports:
+    - name: zoo
+      port: 2181
+      protocol: TCP
+      targetPort: 2181
+  selector:
+    app: zoo-entrance2
+  type: ClusterIP
+---
+
+apiVersion: extensions/v1beta1
+kind: NetworkPolicy
+metadata:
+  labels:
+    app: zoo-entrance2
+  name: zoo-entrance2
+spec:
+  ingress:
+  - from:
+    - podSelector:
+        matchLabels:
+          app: zoo-entrance2
+    ports:
+    - port: 2181
+      protocol: TCP
+  podSelector:
+    matchLabels:
+      strimzi.io/name: cluster2-zookeeper
+  policyTypes:
+  - Ingress
