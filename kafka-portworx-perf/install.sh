@@ -4,10 +4,10 @@ echo "Running script to create Kafka on Kubernetes cluster"
 
 # Set correct values for your subscription
 if [ -z "$CLUSTER_NAME" ]; then
-  CLUSTER_NAME="kafka-px-test"
+  CLUSTER_NAME="nr-kafka-px-test"
 fi
 if [ -z "$RG_NAME" ]; then
-  RG_NAME="kafka-px-test-rg"
+  RG_NAME="nr-kafka-px-test-rg"
 fi
 if [ -z "$LOCATION" ]; then
   LOCATION="westus2"
@@ -75,9 +75,9 @@ done
 echo "Installing Portworx"
 
 # Create a secret to give Portworx access to Azure APIs
-kubectl create secret generic -n kube-system px-azure --from-literal=AZURE_TENANT_ID="" \
-                                                      --from-literal=AZURE_CLIENT_ID=""\
-                                                      --from-literal=AZURE_CLIENT_SECRET=""
+kubectl create secret generic -n kube-system px-azure --from-literal=AZURE_TENANT_ID="72f988bf-86f1-41af-91ab-2d7cd011db47" \
+                                                      --from-literal=AZURE_CLIENT_ID="3f31723e-bf40-4039-92c0-1ce0588572bb"\
+                                                      --from-literal=AZURE_CLIENT_SECRET="b02bc90a-a151-412a-9694-7ce7a289d703"
 
 # Generate custom specs for your portworx config. By default, the script uses Premium volume types, 150 GB, Auto Data and 
 # Management network interfaces with Stork, GUI enabled. To customize this config use the api URL to download a custom yaml

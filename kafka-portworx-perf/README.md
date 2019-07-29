@@ -84,11 +84,11 @@ ID                      NAME                                            SIZE    
 924341013124639820      pvc-653a7482-a3fc-11e9-872e-82275ba87b13        20 GiB  3       no      no              LOW             up - attached on 10.240.0.6no
 283085716488210125      pvc-b3afc5cf-a3fd-11e9-872e-82275ba87b13        20 GiB  3       no      no              LOW             up - attached on 10.240.0.5no
 935420839169754560      pvc-c32f46f5-a3fd-11e9-872e-82275ba87b13        20 GiB  3       no      no              LOW             up - attached on 10.240.0.4no
-nmrose@MININT-86O9IGE:/mnt/c/Users/naros/Desktop/Microsoft/fy20/chubb/portworx/azure-kafka-kubernetes$ kubectl exec portworx-95vrn -n kube-system -- /opt/p
+nmrose@MININT-86O9IGE:/mnt/c/Users/naros/Desktop/Microsoft/fy20/portworx/azure-kafka-kubernetes$ kubectl exec portworx-95vrn -n kube-system -- /opt/p
 ```
 3. Now grab the volume state details for a portworx disk. 
 
-> kubectl exec portworx-95vrn -n kube-system -- /opt/pwx/bin/pxctl volume inspect <volume_id>
+> kubectl exec <portworx_pod>-n kube-system -- /opt/pwx/bin/pxctl volume inspect <volume_id>
 
 ```
 Volume  :  924341013124639820

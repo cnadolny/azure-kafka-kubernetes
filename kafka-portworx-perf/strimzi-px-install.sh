@@ -2,8 +2,8 @@
 
 echo "Running script to create Kafka on Kubernetes cluster"
 
-export CLUSTER_NAME="strimzi-px-test"
-export RG_NAME="strimzi-px-rg"
+export CLUSTER_NAME="nr-strimzi-px-test2"
+export RG_NAME="nr-strimzi-px-rg2"
 export LOCATION="westus2"
 export NODE_SIZE="Standard_DS5_v2"
 export NODE_COUNT="3"
@@ -18,7 +18,8 @@ kubectl create namespace kafka
 
 echo "Installing Strimzi Kafka Operator"
 
-helm repo add strimzi http://strimzi.io/charts/
+helm repo add strimzi 
+
 helm install strimzi/strimzi-kafka-operator --namespace kafka --name kafka-operator
 
 echo "Installing Portworx"
@@ -40,6 +41,9 @@ do
   sleep ${wait}
 done
 
+# Create a storage class defining the storage requirements like replication factor, snapshot policy, and performance profile for kafka
+kubectl create -f portworx/px-ha-sc.yaml
+
 echo "Installing Kafka"
 
 # Swap following lines if you don't want to use ssl.
@@ -50,4 +54,4 @@ kubectl create -n kafka -f strimzi/kafka-topics.yaml
 kubectl create -n kafka -f strimzi/kafka-users.yaml
 
 ### Kafka Perf test:
-kubectl create -n kafka -f kafkaclient.yaml
+kubectl create -n kafka -f strimzi/kafkaclient.yaml
