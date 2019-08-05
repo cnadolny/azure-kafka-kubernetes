@@ -59,6 +59,10 @@ To run the performance test for this Kafka configuration, you can run the `sh ./
 
 You can customize the Kafka configuration by starting with `kafka-ss` which deploys a Kafka cluster that listens on both the plaintext. You can then proceed to configure your cluster using the [Portworx documentation](https://portworx.com/run-ha-kafka-azure-kubernetes-service/).
 
+## How to configure Strimzi Kafka Operator with Portworx
+
+You can use the Strimzi operator instead to deploy your kafka brokers to target portworx volumes. Add your service principal credentials in the `strimzi-px-install.sh`. Lines 10-12 and lines 27-30. Run the shell script then run the `perftest.sh` for a benchmark test.
+
 ## How to interact with Portworx
 
 Portworx creates volumes inside your Kubernetes deployment that it issues as part of the Portworx ASG or cloud drive management. The same drives attach to the new instances automatically. For AKS deployments you can find the new disks inside your resource group with the handle `PX_DO_NOT_DELETE`. In the spec yaml used for Portworx, it defines the volumes/disk and nodes to be allocated to the cluster.
@@ -80,11 +84,11 @@ ID                      NAME                                            SIZE    
 924341013124639820      pvc-653a7482-a3fc-11e9-872e-82275ba87b13        20 GiB  3       no      no              LOW             up - attached on 10.240.0.6no
 283085716488210125      pvc-b3afc5cf-a3fd-11e9-872e-82275ba87b13        20 GiB  3       no      no              LOW             up - attached on 10.240.0.5no
 935420839169754560      pvc-c32f46f5-a3fd-11e9-872e-82275ba87b13        20 GiB  3       no      no              LOW             up - attached on 10.240.0.4no
-nmrose@MININT-86O9IGE:/mnt/c/Users/naros/Desktop/Microsoft/fy20/chubb/portworx/azure-kafka-kubernetes$ kubectl exec portworx-95vrn -n kube-system -- /opt/p
+nmrose@MININT-86O9IGE:/mnt/c/Users/naros/Desktop/Microsoft/fy20/portworx/azure-kafka-kubernetes$ kubectl exec portworx-95vrn -n kube-system -- /opt/p
 ```
 3. Now grab the volume state details for a portworx disk. 
 
-> kubectl exec portworx-95vrn -n kube-system -- /opt/pwx/bin/pxctl volume inspect <volume_id>
+> kubectl exec <portworx_pod>-n kube-system -- /opt/pwx/bin/pxctl volume inspect <volume_id>
 
 ```
 Volume  :  924341013124639820
