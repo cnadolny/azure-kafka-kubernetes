@@ -18,7 +18,7 @@ kubectl create namespace kafka
 
 echo "Installing Strimzi Kafka Operator"
 
-helm repo add strimzi 
+helm repo add strimzi http://strimzi.io/charts/
 
 helm install strimzi/strimzi-kafka-operator --namespace kafka --name kafka-operator
 
